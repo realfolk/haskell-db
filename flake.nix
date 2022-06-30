@@ -9,6 +9,9 @@
     haskellProject.url = "github:realfolk/nix?dir=lib/projects/haskell";
     commonProject.url = "github:realfolk/nix?dir=lib/projects/common";
     projectLib.url = "github:realfolk/nix?dir=lib/projects/lib";
+    haskellLib.url = "github:realfolk/haskell-lib/cd08238d2dc7739d50c19bbdd72aef956a6fcc05";
+    haskellLogger.url = "github:realfolk/haskell-logger/2ffa3d1e58cd52b1e3d59f3487acbab20fb6fcc2";
+    haskellMDRN.url = "github:realfolk/haskell-mdrn/08c9658159f2b90e1cf9dbf65568577aa14f5554";
   };
 
   outputs =
@@ -22,6 +25,9 @@
     , haskellProject
     , commonProject
     , projectLib
+    , haskellLib
+    , haskellLogger
+    , haskellMDRN
     , ...
     }:
     flakeUtils.lib.eachDefaultSystem (system:
@@ -88,13 +94,34 @@
 
       ghc = haskellPkgs.ghcWithPackages haskellDependencies;
 
+      # UPSTREAM LIBRARIES
+
+      haskellLibLibrary = haskellLib.lib.${system}.defineLibProject {
+        buildDir = config.buildDir;
+        buildArtifactsDir = config.buildArtifactsDir;
+      };
+
+      haskellLoggerLibrary = haskellLogger.lib.${system}.defineLoggerProject {
+        buildDir = config.buildDir;
+        buildArtifactsDir = config.buildArtifactsDir;
+      };
+
+      haskellMDRNLibrary = haskellMDRN.lib.${system}.defineMDRNProject {
+        buildDir = config.buildDir;
+        buildArtifactsDir = config.buildArtifactsDir;
+      };
+
       # PROJECTS
 
       dbLibDefinition = {
         groupName = "db";
         projectName = "lib";
-        localDependencies = map defineHaskellProject [
-          #TODO
+        localDependencies = builtins.concatLists [
+          ([ haskellLibLibrary haskellLoggerLibrary haskellMDRNLibrary ])
+          #TODO remove once automatically supported by realfolk/nix upstream
+          haskellLibLibrary.localDependencies
+          haskellLoggerLibrary.localDependencies
+          haskellMDRNLibrary.localDependencies
         ];
       };
 
@@ -112,9 +139,10 @@
       dbBenchmarksDefinition = {
         groupName = "db";
         projectName = "benchmarks";
-        localDependencies = map defineHaskellProject [
-          #TODO
-          dbLibDefinition
+        localDependencies = builtins.concatLists [
+          ([ (defineHaskellProject dbLibDefinition) ])
+          #TODO remove once automatically supported by realfolk/nix upstream
+          dbLibDefinition.localDependencies
         ];
         executables = {
           trie = "Trie.hs";
@@ -135,9 +163,10 @@
       dbTestsDefinition = {
         groupName = "db";
         projectName = "tests";
-        localDependencies = map defineHaskellProject [
-          #TODO
-          dbLibDefinition
+        localDependencies = builtins.concatLists [
+          ([ (defineHaskellProject dbLibDefinition) ])
+          #TODO remove once automatically supported by realfolk/nix upstream
+          dbLibDefinition.localDependencies
         ];
         executables = {
           test = "Spec.hs";
@@ -154,8 +183,47 @@
         inherit system;
         project = defineProject dbTestsDefinition;
       };
+
+      # LIBRARIES
+
+      defineLibraryProject =
+        { groupName
+        , projectName
+        , buildDir
+        , buildArtifactsDir
+        , srcPath
+        , haskellDependencies ? (availableDependencies: [ ])
+        , localDependencies ? [ ]
+        , languageExtensions ? [ ]
+        , ...
+        }:
+        haskellProject.lib.defineProject
+          {
+            inherit groupName projectName buildDir buildArtifactsDir haskellDependencies localDependencies languageExtensions;
+            srcDir = "";
+          } // {
+          inherit srcPath;
+        };
+
+      defineDBProject =
+        { buildDir
+        , buildArtifactsDir
+        , groupName ? "realfolk"
+        , projectName ? "haskell-db"
+        , ...
+        }:
+        defineLibraryProject
+          {
+            inherit groupName projectName buildDir buildArtifactsDir haskellDependencies;
+            srcPath = "${self}/src/db/lib";
+            localDependencies = dbLibDefinition.localDependencies;
+          };
     in
     {
+      lib = {
+        inherit defineDBProject;
+      };
+
       packages = {
         inherit ghc;
         neovim = neovim.packages.${system}.default;
