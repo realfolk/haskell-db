@@ -2757,17 +2757,17 @@
         "rnixLsp": "rnixLsp"
       },
       "locked": {
-        "lastModified": 1656981824,
-        "narHash": "sha256-MQ+/dPrKWlnt4JK1Qf+wQ4oaZR/uc0kulM1TjlGEF5s=",
+        "lastModified": 1656986115,
+        "narHash": "sha256-Y5RtDR5JNDCh5ptq9+OHm809gw8oygtS94pE9ZWNjbc=",
         "owner": "realfolk",
         "repo": "haskell-lib",
-        "rev": "8db5a0efdc1f0e6ec8db623ecbbcafba8615fea9",
+        "rev": "a281eabe93085dc238109d3f20abe83cb30ca5a0",
         "type": "github"
       },
       "original": {
         "owner": "realfolk",
         "repo": "haskell-lib",
-        "rev": "8db5a0efdc1f0e6ec8db623ecbbcafba8615fea9",
+        "rev": "a281eabe93085dc238109d3f20abe83cb30ca5a0",
         "type": "github"
       }
     },
@@ -2784,17 +2784,17 @@
         "rnixLsp": "rnixLsp_2"
       },
       "locked": {
-        "lastModified": 1656981824,
-        "narHash": "sha256-MQ+/dPrKWlnt4JK1Qf+wQ4oaZR/uc0kulM1TjlGEF5s=",
+        "lastModified": 1656986115,
+        "narHash": "sha256-Y5RtDR5JNDCh5ptq9+OHm809gw8oygtS94pE9ZWNjbc=",
         "owner": "realfolk",
         "repo": "haskell-lib",
-        "rev": "8db5a0efdc1f0e6ec8db623ecbbcafba8615fea9",
+        "rev": "a281eabe93085dc238109d3f20abe83cb30ca5a0",
         "type": "github"
       },
       "original": {
         "owner": "realfolk",
         "repo": "haskell-lib",
-        "rev": "8db5a0efdc1f0e6ec8db623ecbbcafba8615fea9",
+        "rev": "a281eabe93085dc238109d3f20abe83cb30ca5a0",
         "type": "github"
       }
     },
@@ -2811,17 +2811,17 @@
         "rnixLsp": "rnixLsp_4"
       },
       "locked": {
-        "lastModified": 1656981824,
-        "narHash": "sha256-MQ+/dPrKWlnt4JK1Qf+wQ4oaZR/uc0kulM1TjlGEF5s=",
+        "lastModified": 1656986115,
+        "narHash": "sha256-Y5RtDR5JNDCh5ptq9+OHm809gw8oygtS94pE9ZWNjbc=",
         "owner": "realfolk",
         "repo": "haskell-lib",
-        "rev": "8db5a0efdc1f0e6ec8db623ecbbcafba8615fea9",
+        "rev": "a281eabe93085dc238109d3f20abe83cb30ca5a0",
         "type": "github"
       },
       "original": {
         "owner": "realfolk",
         "repo": "haskell-lib",
-        "rev": "8db5a0efdc1f0e6ec8db623ecbbcafba8615fea9",
+        "rev": "a281eabe93085dc238109d3f20abe83cb30ca5a0",
         "type": "github"
       }
     },
@@ -2838,17 +2838,17 @@
         "rnixLsp": "rnixLsp_5"
       },
       "locked": {
-        "lastModified": 1656981824,
-        "narHash": "sha256-MQ+/dPrKWlnt4JK1Qf+wQ4oaZR/uc0kulM1TjlGEF5s=",
+        "lastModified": 1656986115,
+        "narHash": "sha256-Y5RtDR5JNDCh5ptq9+OHm809gw8oygtS94pE9ZWNjbc=",
         "owner": "realfolk",
         "repo": "haskell-lib",
-        "rev": "8db5a0efdc1f0e6ec8db623ecbbcafba8615fea9",
+        "rev": "a281eabe93085dc238109d3f20abe83cb30ca5a0",
         "type": "github"
       },
       "original": {
         "owner": "realfolk",
         "repo": "haskell-lib",
-        "rev": "8db5a0efdc1f0e6ec8db623ecbbcafba8615fea9",
+        "rev": "a281eabe93085dc238109d3f20abe83cb30ca5a0",
         "type": "github"
       }
     },
@@ -2866,17 +2866,17 @@
         "rnixLsp": "rnixLsp_3"
       },
       "locked": {
-        "lastModified": 1656982588,
-        "narHash": "sha256-RRLR46GlRZKF6kfxc7fO3FWOgdTjJ2s0Y7H5/He7KQQ=",
+        "lastModified": 1657004283,
+        "narHash": "sha256-D82p5d4JjD1lSsXOidP+Rx1fV/4Byn51YRJMzwhFQaI=",
         "owner": "realfolk",
         "repo": "haskell-logger",
-        "rev": "2cdacab1ecd62fa1052501b6d496c0e83f414414",
+        "rev": "120b5139ceadb53c80d639e7ddc91dff4abafbc3",
         "type": "github"
       },
       "original": {
         "owner": "realfolk",
         "repo": "haskell-logger",
-        "rev": "2cdacab1ecd62fa1052501b6d496c0e83f414414",
+        "rev": "120b5139ceadb53c80d639e7ddc91dff4abafbc3",
         "type": "github"
       }
     },
@@ -2894,17 +2894,17 @@
         "rnixLsp": "rnixLsp_6"
       },
       "locked": {
-        "lastModified": 1656982588,
-        "narHash": "sha256-RRLR46GlRZKF6kfxc7fO3FWOgdTjJ2s0Y7H5/He7KQQ=",
+        "lastModified": 1657004283,
+        "narHash": "sha256-D82p5d4JjD1lSsXOidP+Rx1fV/4Byn51YRJMzwhFQaI=",
         "owner": "realfolk",
         "repo": "haskell-logger",
-        "rev": "2cdacab1ecd62fa1052501b6d496c0e83f414414",
+        "rev": "120b5139ceadb53c80d639e7ddc91dff4abafbc3",
         "type": "github"
       },
       "original": {
         "owner": "realfolk",
         "repo": "haskell-logger",
-        "rev": "2cdacab1ecd62fa1052501b6d496c0e83f414414",
+        "rev": "120b5139ceadb53c80d639e7ddc91dff4abafbc3",
         "type": "github"
       }
     },
@@ -2923,17 +2923,17 @@
         "rnixLsp": "rnixLsp_7"
       },
       "locked": {
-        "lastModified": 1656982816,
-        "narHash": "sha256-NCXYI1RjrPUrhSZmDUazP6Cn3dKGqVIfPCLjT1CqPj4=",
+        "lastModified": 1657004368,
+        "narHash": "sha256-4G0rws6Pjgin/B7r7EDHQH6sccmrvblnJyaHHw5z4Qg=",
         "owner": "realfolk",
         "repo": "haskell-mdrn",
-        "rev": "20b3ddeb3427d6944aa99378b9073af590b96fc1",
+        "rev": "280a3b4b608b7c5ec21f05f616decf7c179c501a",
         "type": "github"
       },
       "original": {
         "owner": "realfolk",
         "repo": "haskell-mdrn",
-        "rev": "20b3ddeb3427d6944aa99378b9073af590b96fc1",
+        "rev": "280a3b4b608b7c5ec21f05f616decf7c179c501a",
         "type": "github"
       }
     },
