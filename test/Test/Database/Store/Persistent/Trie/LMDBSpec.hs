@@ -20,7 +20,7 @@ import qualified Database.Lib.IDManager                       as IDManager
 import qualified Database.Store.Persistent.LMDB.Base          as LMDBBase
 import qualified Database.Store.Persistent.Trie.LMDB          as LMDB
 import qualified Database.Store.Persistent.Trie.LMDB.Internal as LMDBInternal
-import qualified Lib.Binary                                   as Binary
+import qualified Pouch.Binary                                   as Binary
 import           System.IO.Temp                               (withSystemTempDirectory)
 import           Test.Hspec
 import qualified Test.Lib.Spec.Binary                         as BinarySpec

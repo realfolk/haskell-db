@@ -20,9 +20,9 @@ import           Database.Store.Persistent.PrefixedDB (Error (..), Key,
                                                        MakeIndex, ReadOnly,
                                                        ReadWrite, Tx)
 import qualified Database.Store.Persistent.PrefixedDB as DB
-import qualified Lib.Base64                           as B64
-import qualified Lib.Crypto.Hash                      as Hash
-import qualified Lib.Crypto.Hash.SHA1                 as SHA1
+import qualified Pouch.Base64                           as B64
+import qualified Pouch.Crypto.Hash                      as Hash
+import qualified Pouch.Crypto.Hash.SHA1                 as SHA1
 import qualified MDRN.Data                            as Data
 import qualified MDRN.Data.Decode                     as Decode
 import           Prelude                              hiding (readFile,

@@ -31,8 +31,8 @@ import           Data.ByteString.Lazy   (ByteString)
 import qualified Data.ByteString.Lazy   as LazyByteString
 import           Data.Text              (Text)
 import qualified Data.Text              as Text
-import qualified Lib.Either             as Either
-import qualified Lib.Tuple              as Tuple
+import qualified Pouch.Either             as Either
+import qualified Pouch.Tuple              as Tuple
 import qualified MDRN.Data              as Data
 import qualified MDRN.Data.Decode       as Decode
 import           MDRN.Data.Encode       (ToData (..))

@@ -19,8 +19,8 @@ import           Control.Concurrent     (ThreadId, forkIO, killThread,
                                          threadDelay)
 import qualified Control.Concurrent.STM as STM
 import           Control.Monad          (forever)
-import           Lib.Concurrent.Lock    (Lock)
-import qualified Lib.Concurrent.Lock    as Lock
+import           Pouch.Concurrent.Lock    (Lock)
+import qualified Pouch.Concurrent.Lock    as Lock
 
 data Sync
   = Sync !Lock !Queue !ThreadId

@@ -46,8 +46,8 @@ import           Database.Lib.Tx                              (ReadOnly,
 import qualified Database.Lib.Tx                              as Tx
 import qualified Database.Store.Persistent.LMDB.Base          as LMDB
 import           Database.Store.Persistent.Trie.LMDB.Internal
-import qualified Lib.Binary                                   as Binary
-import qualified Lib.Ref                                      as Ref
+import qualified Pouch.Binary                                   as Binary
+import qualified Pouch.Ref                                      as Ref
 
 -- * Connections
 

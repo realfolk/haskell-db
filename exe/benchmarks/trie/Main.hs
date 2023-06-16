@@ -14,10 +14,10 @@ import           Data.Text                      (Text)
 import qualified Data.Text                      as Text
 import qualified Database.Lib.Tx                as Tx
 import qualified Database.Store.Persistent.Trie as Trie
-import qualified Lib.Base64                     as Base64
-import qualified Lib.Crypto.Hash                as Hash
-import qualified Lib.Crypto.Hash.SHA1           as Hash
-import qualified Lib.Crypto.Random              as Random
+import qualified Pouch.Base64                     as Base64
+import qualified Pouch.Crypto.Hash                as Hash
+import qualified Pouch.Crypto.Hash.SHA1           as Hash
+import qualified Pouch.Crypto.Random              as Random
 import           System.IO.Temp                 (withSystemTempDirectory)
 
 -- * Constants

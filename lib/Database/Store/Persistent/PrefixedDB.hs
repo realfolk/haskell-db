@@ -64,10 +64,10 @@ import           Database.Lib.Tx                     (Error, ReadOnly,
                                                       TransactionI (..))
 import qualified Database.Lib.Tx                     as Tx
 import qualified Database.Store.Persistent.LMDB.Base as LMDB
-import qualified Lib.Binary                          as Binary
-import qualified Lib.Either                          as Either
-import           Lib.Ref                             (Ref)
-import qualified Lib.Ref                             as Ref
+import qualified Pouch.Binary                          as Binary
+import qualified Pouch.Either                          as Either
+import           Pouch.Ref                             (Ref)
+import qualified Pouch.Ref                             as Ref
 import           MDRN.Data                           (Data)
 import qualified MDRN.Data                           as Data
 import qualified MDRN.Data.Decode                    as Decode

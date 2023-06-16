@@ -20,7 +20,7 @@ import           Data.Hashable        (Hashable)
 import qualified Data.Hashable        as Hashable
 import           Database.Lib.Tx      (Tx)
 import qualified Database.Lib.Tx      as Tx
-import qualified Lib.Either           as Either
+import qualified Pouch.Either           as Either
 
 -- * Smart Values
 

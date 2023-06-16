@@ -34,8 +34,8 @@ import qualified Database.Lib.IDManager              as IDManager
 import           Database.Lib.Tx                     (ReadWrite)
 import qualified Database.Lib.Tx                     as Tx
 import qualified Database.Store.Persistent.LMDB.Base as LMDB
-import qualified Lib.Binary                          as Binary
-import           Lib.Ref                             (Ref)
+import qualified Pouch.Binary                          as Binary
+import           Pouch.Ref                             (Ref)
 
 -- * Constants
 
