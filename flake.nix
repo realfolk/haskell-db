@@ -7,6 +7,9 @@
     rnixLsp.url = "github:nix-community/rnix-lsp";
     haskellPackages.url = "github:realfolk/nix?dir=lib/projects/haskell/packages/ghc-9.2";
     haskellProject.url = "github:realfolk/nix?dir=lib/projects/haskell";
+    # Haskell Dependencies
+    pouch.url = "github:realfolk/haskell-pouch";
+    mdrn.url = "github:realfolk/haskell-mdrn";
   };
 
   outputs =
@@ -18,15 +21,26 @@
     , rnixLsp
     , haskellPackages
     , haskellProject
+    , pouch
+    , mdrn
     , ...
     }:
     flakeUtils.lib.eachDefaultSystem (system:
     let
       pkgs = nixpkgs.legacyPackages.${system};
-      haskellPkgs = haskellPackages.packages.${system};
-      ghc = haskellPkgs.ghc;
+      haskellPkgs = haskellPackages.packages.${system}.extend (self_: super: {
+        pouch = pouch.packages.${system}.default;
+        mdrn = mdrn.packages.${system}.default;
+      });
+      ghc = haskellPkgs.ghcWithPackages (p: [
+        p.pouch
+        p.mdrn
+        p.text-trie
+      ]);
     in
     {
+      packages.default = haskellPkgs.callCabal2nix "real-folk-db" "${self}" { };
+
       devShells.default = pkgs.mkShell {
         buildInputs = [
           pkgs.silver-searcher # ag
