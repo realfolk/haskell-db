@@ -97,7 +97,6 @@ library
       mdrn,
       mtl,
       pouch,
-      real-folk-logger,
       stm,
       text,
       text-trie,
