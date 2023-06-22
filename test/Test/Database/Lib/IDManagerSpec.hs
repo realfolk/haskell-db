@@ -24,7 +24,7 @@ spec = do
   recycleSpec
   unrecycleSpec
   BinarySpec.create "IDManager" idManagerWithRecycledIDs idManagerWithRecycledIDsByteString
-  HashableSpec.create "IDManager" idManagerWithRecycledIDs 999 2363842136275519587
+  HashableSpec.create "IDManager" idManagerWithRecycledIDs 999 7437073171145927875
 
 -- * Mock Data
 

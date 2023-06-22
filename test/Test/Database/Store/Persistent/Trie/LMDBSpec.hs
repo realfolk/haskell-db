@@ -20,7 +20,7 @@ import qualified Database.Lib.IDManager                       as IDManager
 import qualified Database.Store.Persistent.LMDB.Base          as LMDBBase
 import qualified Database.Store.Persistent.Trie.LMDB          as LMDB
 import qualified Database.Store.Persistent.Trie.LMDB.Internal as LMDBInternal
-import qualified Pouch.Binary                                   as Binary
+import qualified Pouch.Binary                                 as Binary
 import           System.IO.Temp                               (withSystemTempDirectory)
 import           Test.Hspec
 import qualified Test.Lib.Spec.Binary                         as BinarySpec
@@ -67,7 +67,7 @@ mockNodeIDByteString :: LazyByteString.ByteString
 mockNodeIDByteString = "\SOH\NUL\NUL\NUL\NUL\NUL\NUL\NUL\ENQ"
 
 mockNodeIDHash :: Int
-mockNodeIDHash = 281207010793074217
+mockNodeIDHash = 955617441726362441
 
 mockDataID :: LMDB.ID LMDB.Data
 mockDataID = LMDB.DataID 5
@@ -76,7 +76,7 @@ mockDataIDByteString :: LazyByteString.ByteString
 mockDataIDByteString = "\STX\NUL\NUL\NUL\NUL\NUL\NUL\NUL\ENQ"
 
 mockDataIDHash :: Int
-mockDataIDHash = 281207010843407072
+mockDataIDHash = 955620740261247072
 
 mockNode :: LMDB.Node
 mockNode = LMDB.Node (Map.singleton 5 mockNodeID) (Just mockDataID)
@@ -97,7 +97,7 @@ mockIDManagerIDByteString :: LazyByteString.ByteString
 mockIDManagerIDByteString = "\NUL\NUL\NUL\NUL\NUL\NUL\NUL\NUL\ENQ"
 
 mockIDManagerIDHash :: Int
-mockIDManagerIDHash = 281207010809851834
+mockIDManagerIDHash = 955618541237990650
 
 -- * Specs
 
