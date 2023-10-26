@@ -2,11 +2,29 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=23.05";
     flakeUtils.url = "github:numtide/flake-utils";
-    realfolkNix.url = "github:realfolk/nix";
+
+    realfolkNix = {
+      url = "github:realfolk/nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flakeUtils.follows = "flakeUtils";
+    };
 
     # Haskell Dependencies
-    mdrn.url = "github:realfolk/haskell-mdrn";
-    pouch.url = "github:realfolk/haskell-pouch";
+
+    mdrn = {
+      url = "github:realfolk/haskell-mdrn";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flakeUtils.follows = "flakeUtils";
+      inputs.realfolkNix.follows = "realfolkNix";
+      inputs.pouch.follows = "pouch";
+    };
+
+    pouch = {
+      url = "github:realfolk/haskell-pouch";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flakeUtils.follows = "flakeUtils";
+      inputs.realfolkNix.follows = "realfolkNix";
+    };
   };
 
   outputs =
