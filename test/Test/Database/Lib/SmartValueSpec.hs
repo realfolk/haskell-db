@@ -6,6 +6,7 @@ module Test.Database.Lib.SmartValueSpec
 
 import qualified Data.Binary             as Binary
 import           Data.ByteString.Lazy    (ByteString)
+import qualified Data.ByteString.Lazy    as ByteString.Lazy
 import           Data.Function           ((&))
 import qualified Data.Hashable           as Hashable
 import           Database.Lib.SmartValue (SmartValue)
@@ -65,12 +66,13 @@ getSpec =
               & shouldReturn
               $ Left Store.InvalidValue
       context "when the underlying store interface throws an error" $
-        it "fails by throwing the same error" $ \connection ->
+        it "fails by throwing the same error" $ \connection -> do
           -- Get a smart value that doesn't exist in the store.
-          getSmartValue Store.smartValueInterface 0
+          let key = 0 :: Store.Key
+          getSmartValue Store.smartValueInterface key
             & Store.readOnly connection
             & shouldReturn
-            $ Left Store.KeyDoesNotExist
+            $ Left (Store.KeyDoesNotExist $ ByteString.Lazy.toStrict $ Binary.encode key)
 
 updateSpec :: Spec
 updateSpec =

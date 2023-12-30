@@ -26,7 +26,9 @@ import qualified Control.Concurrent.MVar as MVar
 import           Control.Monad           (when)
 import qualified Control.Monad.Except    as Except
 import qualified Control.Monad.State     as State
+import qualified Data.Binary             as Binary
 import           Data.ByteString.Lazy    (ByteString)
+import qualified Data.ByteString.Lazy    as ByteString.Lazy
 import           Data.Map                (Map)
 import qualified Data.Map                as Map
 import           Data.Maybe              (isJust, isNothing)
@@ -97,7 +99,7 @@ readWrite = Tx.transact readWriteInterface
 get :: Key -> Tx mode Value
 get key = do
   TxState {..} <- State.get
-  maybe (Except.throwError Tx.KeyDoesNotExist) return $ Map.lookup key _txDatabase
+  maybe (throwKeyDoesNotExist key) return $ Map.lookup key _txDatabase
 
 put :: Key -> Value -> Tx ReadWrite ()
 put key value = do
@@ -110,7 +112,7 @@ delete :: Key -> Tx ReadWrite ()
 delete key = do
   TxState {..} <- State.get
   let maybeExisting = Map.lookup key _txDatabase
-  when (isNothing maybeExisting) $ Except.throwError Tx.KeyDoesNotExist
+  when (isNothing maybeExisting) $ throwKeyDoesNotExist key
   State.modify (\txState@TxState {..} -> txState { _txDatabase = Map.delete key _txDatabase })
 
 
@@ -123,3 +125,8 @@ smartValueInterface =
     , _siDelete = delete
     , _siPut = put
     }
+
+-- * Internal Helpers
+
+throwKeyDoesNotExist :: Key -> Tx mode a
+throwKeyDoesNotExist = Except.throwError . Tx.KeyDoesNotExist . ByteString.Lazy.toStrict . Binary.encode

@@ -20,7 +20,7 @@ import           Data.Hashable        (Hashable)
 import qualified Data.Hashable        as Hashable
 import           Database.Lib.Tx      (Tx)
 import qualified Database.Lib.Tx      as Tx
-import qualified Pouch.Either           as Either
+import qualified Pouch.Either         as Either
 
 -- * Smart Values
 
@@ -99,9 +99,9 @@ update interface key newValue = do
     handleGetError _ e =
       case e of
         -- Only return 'Nothing' when nothing exists at the specified key.
-        Tx.KeyDoesNotExist -> return Nothing
+        Tx.KeyDoesNotExist _ -> return Nothing
         -- Otherwise, passthrough the 'Tx.Error' to avoid overwriting data accidentally.
-        _                  -> Except.throwError e
+        _                    -> Except.throwError e
     put :: Binary a => StoreInterface key Tx.ReadWrite txState db -> key -> SmartValue a -> Tx Tx.ReadWrite txState db ()
     put interface key smartValue = _siPut interface key $ Binary.encode smartValue
     replace :: Binary a => StoreInterface key Tx.ReadWrite txState db -> key -> SmartValue a -> Tx Tx.ReadWrite txState db ()

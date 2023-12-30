@@ -43,7 +43,7 @@ getSpec =
 
     context "when the key does not exist" $ do
       it "fails with KeyDoesNotExist" $ \db -> do
-        DB.readWrite db (DB.get "foo") `shouldReturn` Left DB.KeyDoesNotExist
+        DB.readWrite db (DB.get "foo") `shouldReturn` Left (DB.KeyDoesNotExist "foo")
 
 putSpec :: SpecC
 putSpec =
@@ -79,9 +79,8 @@ putSpec =
         result <- DB.readWrite db $ do
           DB.put "foo" "bar"
           DB.get "baz" -- This will cause the transaction to be aborted
-        result `shouldBe` Left DB.KeyDoesNotExist
-
-        DB.readOnly db (DB.get "foo") `shouldReturn` Left DB.KeyDoesNotExist
+        result `shouldBe` Left (DB.KeyDoesNotExist "baz")
+        DB.readOnly db (DB.get "foo") `shouldReturn` Left (DB.KeyDoesNotExist "foo")
 
 deleteSpec :: SpecC
 deleteSpec =
@@ -100,7 +99,7 @@ deleteSpec =
 
     context "when the key does not exist" $ do
       it "fails with KeyDoesNotExist" $ \db -> do
-        DB.readWrite db (DB.delete "foo") `shouldReturn` Left DB.KeyDoesNotExist
+        DB.readWrite db (DB.delete "foo") `shouldReturn` Left (DB.KeyDoesNotExist "foo")
 
 -- HELPERS
 

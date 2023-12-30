@@ -31,8 +31,6 @@ library
         Database.Lib.Tx
         Database.Store.Persistent.LMDB.Base
         Database.Store.Persistent.LMDB.Synced
-        Database.Store.Persistent.PrefixedDB
-        Database.Store.Persistent.PrefixedDB.Interface.V1.File
         Database.Store.Persistent.Trie
         Database.Store.Persistent.Trie.Internal
         Database.Store.Persistent.Trie.LMDB
@@ -87,12 +85,9 @@ test-suite real-folk-db-test
         Test.Database.Lib.SmartValueSpec
         Test.Database.Store.Persistent.LMDB.BaseSpec
         Test.Database.Store.Persistent.LMDB.SyncedSpec
-        Test.Database.Store.Persistent.PrefixedDBSpec
         Test.Database.Store.Persistent.Trie.LMDBSpec
         Test.Database.Store.Persistent.Trie.PathSpec
         Test.Database.Store.Persistent.TrieSpec
-        Test.Integration.Server.Module
-        Test.Integration.ServerSpec
         Test.Lib.Spec.Binary
         Test.Lib.Spec.Enum
         Test.Lib.Spec.Hashable

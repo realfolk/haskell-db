@@ -6,20 +6,12 @@ module Test.Database.Store.Persistent.TrieSpec
     ( spec
     ) where
 
-import           Control.Exception                       (bracket)
-import           Control.Monad                           (join)
-import qualified Control.Monad.State                     as State
-import qualified Data.Binary                             as Binary
-import           Data.ByteString                         (ByteString)
-import qualified Data.ByteString                         as ByteString
-import           Data.Function                           ((&))
-import qualified Data.Map.Strict                         as Map
-import           Data.Maybe                              (fromMaybe)
-import qualified Database.Store.Persistent.LMDB.Base     as LMDBBase
-import qualified Database.Store.Persistent.Trie          as Trie
-import qualified Database.Store.Persistent.Trie.Internal as TrieInternal
-import qualified Database.Store.Persistent.Trie.LMDB     as LMDB
-import           System.IO.Temp                          (withSystemTempDirectory)
+import           Control.Exception              (bracket)
+import qualified Data.ByteString                as ByteString
+import           Data.Function                  ((&))
+import qualified Data.Map.Strict                as Map
+import qualified Database.Store.Persistent.Trie as Trie
+import           System.IO.Temp                 (withSystemTempDirectory)
 import           Test.Hspec
 
 -- * Constants
@@ -127,7 +119,7 @@ getSpec =
     context "when the value does not exist" $
       it "throws the correct error" $ \db -> do
         outcome <- Trie.readOnly db $ Trie.get mockNonExistentKey
-        outcome `shouldBe` Left Trie.KeyDoesNotExist
+        outcome `shouldBe` Left (Trie.KeyDoesNotExist mockNonExistentKey)
 
 searchSpec :: SpecWithSeededDB
 searchSpec =
@@ -160,7 +152,7 @@ searchSpec =
     context "when the query does not match any node" $
       it "throws the correct error" $ \db -> do
         outcome <- Trie.readOnly db $ Trie.search mockNonExistentKey
-        outcome `shouldBe` Left Trie.KeyDoesNotExist
+        outcome `shouldBe` Left (Trie.KeyDoesNotExist mockNonExistentKey)
 
 --TODO potentially introspect the underlying LMDB database to ensure
 --parent nodes are deleted and updated correctly.
@@ -173,13 +165,13 @@ deleteSpec =
           deleteOutcome <- Trie.readWrite db $ Trie.delete mockKey2
           deleteOutcome `shouldBe` Right ()
           getOutcome <- Trie.readOnly db $ Trie.get mockKey2
-          getOutcome `shouldBe` Left Trie.KeyDoesNotExist
+          getOutcome `shouldBe` Left (Trie.KeyDoesNotExist mockKey2)
       context "and it is not a leaf node" $ do
         it "deletes the value" $ \db -> do
           deleteOutcome <- Trie.readWrite db $ Trie.delete mockKey0
           deleteOutcome `shouldBe` Right ()
           getOutcome <- Trie.readOnly db $ Trie.get mockKey0
-          getOutcome `shouldBe` Left Trie.KeyDoesNotExist
+          getOutcome `shouldBe` Left (Trie.KeyDoesNotExist mockKey0)
         it "retains all descendant values" $ \db -> do
           outcome <- Trie.readWrite db $ Trie.delete mockKey0
           outcome `shouldBe` Right ()
@@ -194,7 +186,7 @@ deleteSpec =
           deleteOutcome <- Trie.readWrite db $ Trie.delete mockRootKey
           deleteOutcome `shouldBe` Right ()
           getOutcome <- Trie.readOnly db $ Trie.get mockRootKey
-          getOutcome `shouldBe` Left Trie.KeyDoesNotExist
+          getOutcome `shouldBe` Left (Trie.KeyDoesNotExist mockRootKey)
         it "retains all descendant values" $ \db -> do
           outcome <- Trie.readWrite db $ Trie.delete mockRootKey
           outcome `shouldBe` Right ()
@@ -205,7 +197,7 @@ deleteSpec =
     context "when the value does not exist" $
       it "throws the correct error" $ \db -> do
         outcome <- Trie.readWrite db $ Trie.delete mockNonExistentKey
-        outcome `shouldBe` Left Trie.KeyDoesNotExist
+        outcome `shouldBe` Left (Trie.KeyDoesNotExist mockNonExistentKey)
 
 -- * Helpers
 

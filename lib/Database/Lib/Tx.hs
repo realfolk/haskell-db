@@ -26,16 +26,15 @@ import           Control.Monad.State    (MonadState, StateT)
 import qualified Control.Monad.State    as State
 import           Data.Binary            (Binary)
 import qualified Data.Binary            as Binary
+import           Data.ByteString        (ByteString)
 import qualified Data.ByteString        as ByteString
-import           Data.ByteString.Lazy   (ByteString)
 import qualified Data.ByteString.Lazy   as LazyByteString
 import           Data.Text              (Text)
 import qualified Data.Text              as Text
-import qualified Pouch.Either             as Either
-import qualified Pouch.Tuple              as Tuple
 import qualified MDRN.Data              as Data
 import qualified MDRN.Data.Decode       as Decode
 import           MDRN.Data.Encode       (ToData (..))
+import qualified Pouch.Tuple            as Tuple
 
 -- * Transactions
 
@@ -91,7 +90,7 @@ execTx (Tx m) = State.runStateT (Except.runExceptT m)
 -- * Error
 
 data Error mode where
-  KeyDoesNotExist :: Error mode
+  KeyDoesNotExist :: ByteString -> Error mode
   InvalidValue :: Error mode
   Failure :: Text -> Error mode
   UnsuccessfulWrite :: Error ReadWrite
@@ -100,19 +99,19 @@ data Error mode where
   Multiple :: [Error mode] -> Error mode
 
 instance Eq (Error mode) where
-  (==) KeyDoesNotExist KeyDoesNotExist     = True
-  (==) InvalidValue InvalidValue           = True
-  (==) (Failure a) (Failure b)             = a == b
-  (==) UnsuccessfulWrite UnsuccessfulWrite = True
-  (==) KeyAlreadyExists KeyAlreadyExists   = True
-  (==) EmptyValue EmptyValue               = True
-  (==) (Multiple es1) (Multiple es2)       = es1 == es2
-  (==) a b                                 = False
+  (==) (KeyDoesNotExist a) (KeyDoesNotExist b) = a == b
+  (==) InvalidValue InvalidValue               = True
+  (==) (Failure a) (Failure b)                 = a == b
+  (==) UnsuccessfulWrite UnsuccessfulWrite     = True
+  (==) KeyAlreadyExists KeyAlreadyExists       = True
+  (==) EmptyValue EmptyValue                   = True
+  (==) (Multiple es1) (Multiple es2)           = es1 == es2
+  (==) _ _                                     = False
 
 instance Show (Error mode) where
   show err =
     case err of
-      KeyDoesNotExist   -> "KeyDoesNotExist"
+      KeyDoesNotExist k -> "KeyDoesNotExist " <> show k
       InvalidValue      -> "InvalidValue"
       Failure s         -> "Failure " <> Text.unpack s
       UnsuccessfulWrite -> "UnsuccessfulWrite"
@@ -124,7 +123,7 @@ instance ToData (Error mode) where
   toData err =
     case err of
       Failure s         -> Data.list [Data.symbol "failure", Data.text s]
-      KeyDoesNotExist   -> Data.symbol "key-does-not-exist"
+      KeyDoesNotExist k -> Data.list [Data.symbol "key-does-not-exist", Data.byteString k]
       InvalidValue      -> Data.symbol "invalid-value"
       UnsuccessfulWrite -> Data.symbol "unsuccessful-write"
       KeyAlreadyExists  -> Data.symbol "key-already-exists"
@@ -134,7 +133,7 @@ instance ToData (Error mode) where
 instance Decode.FromData (Error ReadOnly) where
   decoder =
     Decode.oneOf
-      [ KeyDoesNotExist <$ Decode.symbolEq "key-does-not-exist"
+      [ KeyDoesNotExist <$ Decode.symbolEq "key-does-not-exist" <*> Decode.byteString
       , InvalidValue <$ Decode.symbolEq "invalid-value"
       , Multiple <$> Decode.list Decode.decoder
       ]
@@ -142,7 +141,7 @@ instance Decode.FromData (Error ReadOnly) where
 instance Decode.FromData (Error ReadWrite) where
   decoder =
     Decode.oneOf
-      [ KeyDoesNotExist <$ Decode.symbolEq "key-does-not-exist"
+      [ KeyDoesNotExist <$ Decode.symbolEq "key-does-not-exist" <*> Decode.byteString
       , InvalidValue <$ Decode.symbolEq "invalid-value"
       , Failure <$ Decode.symbolEq "failure" <*> Decode.text
       , UnsuccessfulWrite <$ Decode.symbolEq "unsuccessful-write"
