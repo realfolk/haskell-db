@@ -45,13 +45,14 @@ import qualified Data.ByteString         as ByteString
 import qualified Data.ByteString.Lazy    as LazyByteString
 import qualified Data.ByteString.Unsafe  as UnsafeByteString
 import           Data.Functor            (($>))
+import qualified Data.Text.Encoding      as Text.Encoding
 import           Data.Word               (Word32, Word64)
-import           Database.LMDB.Raw
 import qualified Database.Lib.SmartValue as SmartValue
 import           Database.Lib.Tx         (Error (..), ReadOnly, ReadWrite,
                                           RunTransaction,
                                           TransactionI (TransactionI))
 import qualified Database.Lib.Tx         as Tx
+import           Database.LMDB.Raw
 import           Foreign.C.Types         (CSize)
 import           Foreign.Ptr             (castPtr)
 import           GHC.Generics            (Generic)
@@ -120,8 +121,8 @@ exists k = (get k $> True) `Except.catchError` handleError
     handleError :: Error mode -> Tx mode Bool
     handleError e =
       case e of
-        KeyDoesNotExist -> return False
-        _               -> Except.throwError e
+        KeyDoesNotExist _ -> return False
+        _                 -> Except.throwError e
 
 get :: Key -> Tx mode Value
 get k = do
@@ -130,7 +131,7 @@ get k = do
     keyMDB <- makeMDBKey k
     valMDB <- mdb_get txn db keyMDB
     maybe (return Nothing) (fmap Just . getValueFromMDB) valMDB
-  maybe (Except.throwError KeyDoesNotExist) return result
+  maybe (throwKeyDoesNotExist k) return result
 
 create :: Tx ReadWrite Key -> Value -> Tx ReadWrite Key
 create keygen value = do
@@ -153,7 +154,7 @@ delete k = do
   result <- liftIO $! do
     keyMDB <- makeMDBKey k
     mdb_del txn db keyMDB Nothing
-  unless result $ Except.throwError KeyDoesNotExist
+  unless result $ throwKeyDoesNotExist k
 
 data Stats
   = Stats
@@ -204,6 +205,9 @@ beginTx :: Bool -> Connection -> IO TxState
 beginTx ro lmdb@(Connection env _) = do
   mdbTxn <- mdb_txn_begin env Nothing ro
   return $ TxState lmdb mdbTxn
+
+throwKeyDoesNotExist :: Key -> Tx mode a
+throwKeyDoesNotExist = Except.throwError . Tx.KeyDoesNotExist
 
 -- *** Raw LMDB Interface
 

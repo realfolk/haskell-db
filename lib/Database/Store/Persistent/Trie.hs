@@ -34,8 +34,8 @@ import qualified Data.ByteString                         as ByteString
 import           Data.Map.Strict                         (Map)
 import qualified Data.Map.Strict                         as Map
 import qualified Data.Maybe                              as Maybe
+import qualified Data.Text.Encoding                      as Text.Encoding
 import           Data.Word                               (Word8)
-import           Database.Lib.Sync                       (Sync)
 import qualified Database.Lib.Sync                       as Sync
 import           Database.Lib.Tx                         (ReadOnly, ReadWrite,
                                                           RunTransaction,
@@ -45,7 +45,6 @@ import           Database.Store.Persistent.Trie.Internal
 import           Database.Store.Persistent.Trie.LMDB     (Data (..), ID (..),
                                                           Node (..))
 import qualified Database.Store.Persistent.Trie.LMDB     as LMDB
-import           Database.Store.Persistent.Trie.Path     (Path)
 import qualified Database.Store.Persistent.Trie.Path     as Path
 
 -- * Core Types
@@ -116,8 +115,8 @@ exists key = checkExistence `Except.catchError` onError
       return $ Path.isComplete path
     onError e =
       case e of
-        LMDB.KeyDoesNotExist -> return False
-        _                    -> Except.throwError e
+        LMDB.KeyDoesNotExist _ -> return False
+        _                      -> Except.throwError e
 
 get :: Key -> Tx mode Value
 get key = do
@@ -127,7 +126,7 @@ get key = do
       Path.Complete dataID _ -> do
         Data {..} <- LMDB.get dataID
         return _dataValue
-      _ -> Except.throwError LMDB.KeyDoesNotExist
+      _ -> throwKeyDoesNotExist key
 
 
 -- | A useful helper type for implementing 'search'. It helps avoid unnecessary @O(n)@ operations when running a query.
@@ -146,7 +145,7 @@ search key = fromLMDB $ do
       flattenNode key node
     -- The key does not exist in the trie.
     Path.Incomplete _ _ ->
-      Except.throwError LMDB.KeyDoesNotExist
+      throwKeyDoesNotExist key
   return $ makeFlattened Map.empty
     where
       flattenNode :: Key -> Node -> LMDB.Tx mode AppendFlattened
@@ -219,10 +218,10 @@ delete key = fromLMDB $ do
     -- Fully matched the key and data DOES NOT already exist.
     -- Therefore, the key doesn't exist, nothing to delete.
     Path.Incomplete "" _ ->
-      Except.throwError LMDB.KeyDoesNotExist
+      throwKeyDoesNotExist key
     -- The key doesn't exist at all, nothing to delete.
     Path.Incomplete _ _ ->
-      Except.throwError LMDB.KeyDoesNotExist
+      throwKeyDoesNotExist key
     -- Fully matched the key and data exists. Proceed with deletion.
     -- Delete the data and any "empty" parent nodes.
     Path.Complete dataID (Path.Parent parentNodeID parentNode grandparent) -> do
@@ -244,7 +243,7 @@ delete key = fromLMDB $ do
       case maybeParent of
         Nothing ->
           return ()
-        Just parent@(Path.Parent nodeID node grandparent) ->
+        Just parent@(Path.Parent nodeID _ grandparent) ->
           when (canDeleteParent True parent) $ do
             LMDB.delete nodeID
             deleteGrandparents grandparent
@@ -265,3 +264,8 @@ delete key = fromLMDB $ do
     numChildren :: Path.Parent -> Int
     numChildren (Path.Parent _ Node {..} _) =
       Map.size _nodeChildren
+
+-- * Internal Helpers
+
+throwKeyDoesNotExist :: Key -> LMDB.Tx mode a
+throwKeyDoesNotExist = Except.throwError . Tx.KeyDoesNotExist

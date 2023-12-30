@@ -1,6 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards   #-}
-{-# LANGUAGE TupleSections     #-}
 
 module Test.Database.Store.Persistent.Trie.LMDBSpec
     ( spec
@@ -8,13 +7,14 @@ module Test.Database.Store.Persistent.Trie.LMDBSpec
 
 import           Control.Exception                            (bracket)
 import qualified Control.Monad.State                          as State
+import           Data.Binary                                  (Binary)
 import qualified Data.Binary                                  as Binary
-import           Data.ByteString                              (ByteString)
 import qualified Data.ByteString                              as ByteString
 import qualified Data.ByteString.Lazy                         as LazyByteString
 import           Data.Function                                ((&))
 import qualified Data.Map.Strict                              as Map
 import           Data.Maybe                                   (fromMaybe)
+import qualified Data.Text.Encoding                           as Text.Encoding
 import           Database.Lib.IDManager                       (IDManager)
 import qualified Database.Lib.IDManager                       as IDManager
 import qualified Database.Store.Persistent.LMDB.Base          as LMDBBase
@@ -98,6 +98,9 @@ mockIDManagerIDByteString = "\NUL\NUL\NUL\NUL\NUL\NUL\NUL\NUL\ENQ"
 
 mockIDManagerIDHash :: Int
 mockIDManagerIDHash = 955618541237990650
+
+keyDoesNotExist :: (Binary value, Binary (LMDB.ID value))  => LMDB.ID value -> LMDB.Error mode
+keyDoesNotExist = LMDB.KeyDoesNotExist . LazyByteString.toStrict . Binary.encode
 
 -- * Specs
 
@@ -229,8 +232,9 @@ getSpec =
           outcome `shouldBe` Left LMDB.InvalidValue
     context "when the value does not exist" $
       it "throws the correct error" $ \(db, SeedData {..}) -> do
-        outcome <- LMDB.readOnly db $ LMDB.get $ LMDB.NodeID maxBound
-        outcome `shouldBe` Left LMDB.KeyDoesNotExist
+        let id' = LMDB.NodeID maxBound
+        outcome <- LMDB.readOnly db $ LMDB.get id'
+        outcome `shouldBe` Left (keyDoesNotExist id')
 
 deleteSpec :: SpecWithSeededDB
 deleteSpec =
@@ -240,8 +244,8 @@ deleteSpec =
         Right _ <- LMDB.readWrite db $ LMDB.delete _sdNode0ID >> LMDB.delete _sdData0ID
         nodeOutcome <- LMDB.readOnly db $ LMDB.get _sdNode0ID
         dataOutcome <- LMDB.readOnly db $ LMDB.get _sdData0ID
-        nodeOutcome `shouldBe` Left LMDB.KeyDoesNotExist
-        dataOutcome `shouldBe` Left LMDB.KeyDoesNotExist
+        nodeOutcome `shouldBe` Left (keyDoesNotExist _sdNode0ID)
+        dataOutcome `shouldBe` Left (keyDoesNotExist _sdData0ID)
       it "updates the IDManager correctly" $ \(db, SeedData {..}) -> do
         Right (nodeIDManager0, dataIDManager0) <- LMDB.readOnly db getIDManagers
         Right _ <- LMDB.readWrite db $ LMDB.delete _sdNode0ID >> LMDB.delete _sdData0ID
@@ -250,8 +254,9 @@ deleteSpec =
         Just dataIDManager1 `shouldBe` IDManager.recycle _sdData0ID dataIDManager0
     context "when the value does not exist" $
       it "throws the correct error" $ \(db, SeedData {..}) -> do
-        outcome <- LMDB.readWrite db $ LMDB.delete $ LMDB.NodeID maxBound
-        outcome `shouldBe` Left LMDB.KeyDoesNotExist
+        let id' = LMDB.NodeID maxBound
+        outcome <- LMDB.readWrite db $ LMDB.delete id'
+        outcome `shouldBe` Left (keyDoesNotExist id')
 
 replaceSpec :: SpecWithSeededDB
 replaceSpec =
@@ -270,8 +275,9 @@ replaceSpec =
         dataIDManager0 `shouldBe` dataIDManager1
     context "when the value does not exist" $
       it "throws the correct error" $ \(db, SeedData {..}) -> do
-        outcome <- LMDB.readWrite db $ LMDB.replace (LMDB.NodeID maxBound) newNode
-        outcome `shouldBe` Left LMDB.KeyDoesNotExist
+        let id' = LMDB.NodeID maxBound
+        outcome <- LMDB.readWrite db $ LMDB.replace id' newNode
+        outcome `shouldBe` Left (keyDoesNotExist id')
     where
       newNode = LMDB.Node Map.empty Nothing
       newData = LMDB.Data $ ByteString.pack [0, 1, 2]
