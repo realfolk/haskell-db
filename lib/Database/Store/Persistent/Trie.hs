@@ -34,7 +34,6 @@ import qualified Data.ByteString                         as ByteString
 import           Data.Map.Strict                         (Map)
 import qualified Data.Map.Strict                         as Map
 import qualified Data.Maybe                              as Maybe
-import qualified Data.Text.Encoding                      as Text.Encoding
 import           Data.Word                               (Word8)
 import qualified Database.Lib.Sync                       as Sync
 import           Database.Lib.Tx                         (ReadOnly, ReadWrite,
@@ -46,6 +45,7 @@ import           Database.Store.Persistent.Trie.LMDB     (Data (..), ID (..),
                                                           Node (..))
 import qualified Database.Store.Persistent.Trie.LMDB     as LMDB
 import qualified Database.Store.Persistent.Trie.Path     as Path
+import qualified Pouch.Binary                            as Binary
 
 -- * Core Types
 
@@ -121,12 +121,18 @@ exists key = checkExistence `Except.catchError` onError
 get :: Key -> Tx mode Value
 get key = do
   fromLMDB $ do
-    path <- Path.resolve LMDB.rootNodeID key
+    path <- Path.resolve LMDB.rootNodeID key `Except.catchError` handleError
     case path of
       Path.Complete dataID _ -> do
         Data {..} <- LMDB.get dataID
         return _dataValue
       _ -> throwKeyDoesNotExist key
+    where
+      handleError :: LMDB.Error mode -> LMDB.Tx mode a
+      handleError e =
+        case e of
+          LMDB.KeyDoesNotExist _ -> throwKeyDoesNotExist key
+          _                      -> Except.throwError e
 
 
 -- | A useful helper type for implementing 'search'. It helps avoid unnecessary @O(n)@ operations when running a query.
